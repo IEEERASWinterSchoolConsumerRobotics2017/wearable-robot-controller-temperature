@@ -446,10 +446,10 @@ int send_udp_heart(int y)
     /* get a message from the user */
     char buf[256];
 
-	char *s1 = "heart rate";
-	double k = 120;
+	char *s1 = "set thermostat des";
+	double k = 40.0;
     double xf = (y/360.0) * k;
-	double yy = 150.0 - xf;
+	double yy = 90.0 - xf;
 
 	snprintf(buf, 256, "%s %.3f", s1, yy);
 
