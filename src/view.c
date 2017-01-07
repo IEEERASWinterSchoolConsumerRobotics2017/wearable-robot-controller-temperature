@@ -44,7 +44,8 @@ int udp_sockfd;
 int udp_serverlen;
 struct sockaddr_in udp_serveraddr;
 struct hostent *udp_server;
-char *udp_the_ip = "104.131.47.73";
+//char *udp_the_ip = "104.131.47.73";
+char *udp_the_ip = "10.18.81.7";
 int udp_portno = 2362;
 
 #define SRV_IP "999.999.999.999"
@@ -252,7 +253,7 @@ void mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 
 
 	print_debug((int)ev->canvas.x,(int)ev->canvas.y);
-	send_udp((int)ev->canvas.x,(int)ev->canvas.y);
+	send_udp_heart((int)ev->canvas.y);
 	//send_udp(1,2);
 }
 
@@ -269,7 +270,7 @@ void mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	s_info.cur_x = ev->canvas.x;
 	s_info.cur_y = ev->canvas.y;
 
-	send_udp((int)ev->canvas.x,(int)ev->canvas.y);
+	send_udp_heart((int)ev->canvas.y);
 	//print_debug((int)ev->canvas.x,(int)ev->canvas.y);
 }
 
@@ -288,7 +289,7 @@ void mouse_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	s_info.prev_y = ev->prev.canvas.y;
 
 	//print_debug((int)s_info.cur_x, (int)s_info.cur_y);
-	send_udp((int)s_info.cur_x, (int)s_info.cur_y);
+	send_udp_heart((int)s_info.cur_y);
 }
 
 void print_debug(int x, int y)
@@ -408,6 +409,7 @@ int init_udp(void)
 
 }
 
+
 int send_udp(int x, int y)
 {
     /* get a message from the user */
@@ -423,6 +425,33 @@ int send_udp(int x, int y)
 	if(yf >  1.0) yf = 1.0;
 	if(yf < -1.0) yf = -1.0;
 	snprintf(buf, 256, "%s %.3f %.3f", s1, xf, yf);
+
+
+    /* send the message to the server */
+    int n = sendto(udp_sockfd, buf, strlen(buf), 0, &udp_serveraddr, udp_serverlen);
+//    n = sendto(sockfd, buf, strlen(buf), MSG_DONTWAIT, &serveraddr, serverlen);
+
+    if (n < 0)
+      error("ERROR in sendto");
+
+    return 0;
+
+
+}
+
+
+
+int send_udp_heart(int y)
+{
+    /* get a message from the user */
+    char buf[256];
+
+	char *s1 = "heart rate";
+	double k = 120;
+    double xf = (y/360.0) * k;
+	double yy = 150.0 - xf;
+
+	snprintf(buf, 256, "%s %.3f", s1, yy);
 
 
     /* send the message to the server */

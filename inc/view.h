@@ -37,4 +37,5 @@ int send_udp_one(void);
 void eprint(char *msg);
 int send_udp(int x, int y);
 int init_udp(void);
+int send_udp_heart(int y);
 #endif
